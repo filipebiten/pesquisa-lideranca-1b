@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pesquisa com a Liderança · protótipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --carvao:#232323;--carvao-2:#1a1a1a;
+  --verde:#5E9C82;--verde-escuro:#4d826b;--verde-claro:#7bb59d;--verde-suave:rgba(94,156,130,.08);
+  --offwhite:#F2F2F2;--branco:#FFFFFF;--cinza-texto:#5a5a5a;--cinza-suave:#8a8a8a;--cinza-linha:rgba(0,0,0,.08);
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --fundo:#e9e9e6;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--fundo:#141414}}
+:root[data-theme="dark"]{--fundo:#141414}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font-family:var(--sans);background:var(--fundo);color:var(--carvao);min-height:100%}
+button{font-family:inherit}
+.tag-line{display:inline-flex;align-items:center;gap:14px;font-size:.72rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--verde);margin-bottom:14px}
+.tag-line::before{content:'';display:inline-block;width:32px;height:1.5px;background:var(--verde)}
+.tag-white{color:var(--verde-claro)}.tag-white::before{background:var(--verde-claro)}
+
+/* barra de teste */
+.barra{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 20px;background:var(--carvao);color:var(--branco)}
+.barra .marca{font-weight:800;letter-spacing:-.5px;margin-right:auto}
+.barra .marca small{font-weight:500;color:var(--cinza-suave);margin-left:8px;letter-spacing:0}
+.seg{display:inline-flex;border:1.5px solid rgba(255,255,255,.25);border-radius:50px;overflow:hidden}
+.seg button{background:transparent;color:var(--branco);border:0;padding:9px 18px;font-size:.72rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer}
+.seg button.on{background:var(--verde)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;border-radius:50px;border:0;cursor:pointer;transition:all .3s}
+.btn-verde{background:var(--verde);color:var(--branco)}
+.btn-verde:hover{background:var(--verde-escuro);transform:translateY(-2px);box-shadow:0 12px 30px rgba(94,156,130,.35)}
+.btn-ghost{background:transparent;color:var(--branco);border:1.5px solid rgba(255,255,255,.3)}
+.btn-ghost:hover{border-color:var(--branco)}
+.btn:focus-visible,.seg button:focus-visible,.opc:focus-visible{outline:2px solid var(--verde-claro);outline-offset:2px}
+
+.palco{display:grid;grid-template-columns:auto 1fr;gap:28px;padding:28px 20px;align-items:start;max-width:1500px;margin:0 auto}
+@media (max-width:960px){.palco{grid-template-columns:1fr;justify-items:center}}
+.rotulo-area{font-size:.72rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cinza-suave);margin:0 0 10px 4px}
+.lado-telao{width:100%;min-width:0}
+
+/* ============ CELULAR ============ */
+.celular{width:360px;max-width:100%;height:720px;border-radius:44px;background:var(--carvao-2);padding:12px;box-shadow:0 30px 60px rgba(0,0,0,.18)}
+.tela-cel{height:100%;border-radius:34px;overflow:hidden;background:var(--offwhite);display:flex;flex-direction:column;position:relative}
+.cab-cel{background:var(--carvao);color:var(--branco);padding:18px 20px 14px;display:flex;align-items:center;justify-content:space-between}
+.logo-txt{font-weight:900;letter-spacing:-1px;font-size:1.05rem;display:flex;align-items:center;gap:8px}
+.logo-txt .selo1b{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--branco);display:grid;place-items:center;font-size:.72rem;font-weight:900;letter-spacing:-.5px}
+.cab-cel .fase{font-size:.62rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--verde-claro)}
+.prog{height:3px;background:rgba(0,0,0,.06)}
+.prog i{display:block;height:100%;background:var(--verde);transition:width .4s cubic-bezier(.32,.72,0,1)}
+.corpo-cel{flex:1;padding:22px 22px 10px;display:flex;flex-direction:column;min-height:0}
+.contagem{font-size:.72rem;color:var(--cinza-suave);font-weight:600;margin-bottom:6px}
+.perg{font-size:1.28rem;font-weight:800;letter-spacing:-.6px;line-height:1.18;margin:0 0 6px}
+.instr{font-size:.85rem;color:var(--cinza-texto);margin:0 0 14px}
+.opcs{display:flex;flex-direction:column;gap:8px;overflow:auto;min-height:0;padding-bottom:4px}
+.opc{text-align:left;background:var(--branco);border:1.5px solid var(--cinza-linha);border-radius:16px;padding:13px 16px;font-size:.92rem;font-weight:500;color:var(--carvao);cursor:pointer;transition:border-color .2s,background .2s;line-height:1.3}
+.opc.on{border-color:var(--verde);background:var(--verde-suave);font-weight:700}
+.opc.off{opacity:.4}
+.opcs.compacta .opc{padding:10px 14px;font-size:.84rem}
+.escala{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:6px}
+.escala .opc{text-align:center;padding:16px 0;font-size:1.3rem;font-weight:800}
+.rot-escala{min-height:22px;font-size:.85rem;color:var(--verde-escuro);font-weight:700;margin:12px 0 10px;text-align:center}
+.item-escala{font-size:1.02rem;font-weight:600;line-height:1.35;margin:4px 0 8px;padding:14px 16px;background:var(--branco);border-radius:16px;border:1px solid var(--cinza-linha)}
+textarea,input.txt{width:100%;font-family:inherit;font-size:1rem;border:1.5px solid var(--cinza-linha);border-radius:16px;padding:14px;background:var(--branco);color:var(--carvao);resize:none}
+textarea{flex:1;min-height:140px}
+textarea:focus,input.txt:focus{outline:none;border-color:var(--verde)}
+.nuvem-in{display:flex;flex-direction:column;gap:10px}
+.rodape-cel{display:flex;gap:10px;padding:12px 22px 22px}
+.rodape-cel .btn{flex:1;padding:15px}
+.btn-out{background:transparent;border:1.5px solid var(--carvao);color:var(--carvao)}
+.btn-verde:disabled{background:#b8c9c1;cursor:not-allowed;transform:none;box-shadow:none}
+.salvo{position:absolute;top:66px;right:16px;font-size:.66rem;font-weight:700;color:var(--verde-escuro);background:var(--branco);border-radius:50px;padding:4px 10px;opacity:0;transition:opacity .3s}
+.salvo.show{opacity:1}
+.conteudo-cel{overflow:auto;min-height:0;flex:1}
+.conteudo-cel h2{font-size:1.5rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin:0 0 12px}
+.conteudo-cel p{font-size:.95rem;line-height:1.6;color:var(--cinza-texto);margin:0 0 12px}
+.conteudo-cel .rod{font-size:.78rem;color:var(--cinza-suave)}
+.card-op{background:var(--branco);border:1px solid var(--cinza-linha);border-radius:16px;padding:14px 16px;margin-bottom:10px}
+.card-op h3{margin:0 0 8px;font-size:.95rem;font-weight:800;color:var(--verde-escuro)}
+.card-op dl{margin:0;display:grid;gap:6px}
+.card-op dt{font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cinza-suave)}
+.card-op dd{margin:0 0 4px;font-size:.84rem;line-height:1.4}
+.fim-cel{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:30px}
+.fim-cel h2{font-size:2rem;font-weight:800;letter-spacing:-1.5px;margin:0 0 12px}
+.fim-cel p{color:var(--cinza-texto);line-height:1.6}
+.circ{width:48px;height:48px;border-radius:50%;background:var(--verde);color:var(--branco);display:grid;place-items:center;margin-bottom:20px}
+
+/* ============ TELÃO ============ */
+.telao{container-type:inline-size;width:100%;aspect-ratio:16/9;background:var(--carvao);color:var(--branco);border-radius:14px;overflow:hidden;position:relative;outline:none;box-shadow:0 30px 60px rgba(0,0,0,.18)}
+.telao:fullscreen{border-radius:0}
+.t-cab{position:absolute;top:3cqw;left:4cqw;right:4cqw;display:flex;justify-content:space-between;align-items:center;z-index:2}
+.t-cab .logo-txt{font-size:1.6cqw}
+.t-cab .logo-txt .selo1b{width:2.6cqw;height:2.6cqw;font-size:.9cqw}
+.t-status{display:flex;gap:1cqw}
+.pill{font-size:.8cqw;font-weight:700;letter-spacing:.25cqw;text-transform:uppercase;padding:.5cqw 1.1cqw;border-radius:50px;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7)}
+.pill.aberta{border-color:var(--verde-claro);color:var(--verde-claro)}
+.t-corpo{position:absolute;inset:8.5cqw 4cqw 5cqw}
+.t-rod{position:absolute;left:4cqw;right:4cqw;bottom:2.2cqw;display:flex;justify-content:space-between;font-size:1cqw;color:rgba(255,255,255,.45)}
+.t-rod b{color:var(--branco);font-weight:700}
+.t-cont b{display:inline-block}
+.pulse{animation:pulse .5s ease}
+@keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.35);color:var(--verde-claro)}100%{transform:scale(1)}}
+.t-tag{font-size:.95cqw!important;margin-bottom:1.2cqw!important;gap:1.2cqw!important;letter-spacing:.3cqw!important}
+.t-tag::before{width:3cqw!important}
+.t-perg{font-size:3.1cqw;font-weight:800;letter-spacing:-.12cqw;line-height:1.1;margin:0 0 2.6cqw;max-width:80cqw}
+.t-perg small{display:block;font-size:1.2cqw;font-weight:500;color:rgba(255,255,255,.5);letter-spacing:0;margin-top:.8cqw}
+
+.qr-wrap{display:grid;grid-template-columns:auto 1fr;gap:5cqw;align-items:center;height:100%}
+.qr-box{background:var(--branco);padding:1.6cqw;border-radius:1.6cqw;width:30cqw;height:30cqw}
+.qr-box img,.qr-box canvas{width:100%!important;height:100%!important;display:block}
+.qr-txt h1{font-size:5.4cqw;font-weight:800;letter-spacing:-.25cqw;line-height:1;margin:0 0 1.6cqw}
+.qr-txt p{font-size:1.7cqw;color:rgba(255,255,255,.7);margin:0 0 3cqw;line-height:1.4}
+.qr-txt .link{font-size:1.2cqw;color:var(--verde-claro);font-weight:600}
+.qr-num{font-size:7cqw;font-weight:800;letter-spacing:-.3cqw;line-height:1}
+.qr-num small{display:block;font-size:1.1cqw;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.2cqw;text-transform:uppercase;margin-top:.5cqw}
+
+.barras{display:flex;flex-direction:column;gap:1.25cqw}
+.barra-l{display:grid;grid-template-columns:30cqw 1fr 9cqw;align-items:center;gap:1.6cqw;font-size:1.35cqw}
+.barra-l .nome{line-height:1.2;color:rgba(255,255,255,.85)}
+.trilho{height:2.3cqw;background:rgba(255,255,255,.06);border-radius:50px;overflow:hidden}
+.trilho i{display:block;height:100%;width:0;background:rgba(255,255,255,.28);border-radius:50px;transition:width .8s cubic-bezier(.32,.72,0,1),background .4s}
+.barra-l.lider .trilho i{background:var(--verde)}
+.barra-l.lider .nome{color:var(--branco);font-weight:700}
+.barra-l .val{text-align:right;font-weight:800;font-size:1.6cqw;letter-spacing:-.05cqw}
+.barra-l .val small{font-weight:500;font-size:1cqw;color:rgba(255,255,255,.5);margin-left:.4cqw}
+.barras.densa{gap:.8cqw}.barras.densa .barra-l{font-size:1.15cqw}.barras.densa .trilho{height:1.7cqw}
+.legenda{font-size:1cqw;color:rgba(255,255,255,.45);margin-top:1.6cqw}
+
+.grade{display:flex;flex-direction:column;gap:.9cqw}
+.g-l{display:grid;grid-template-columns:1fr 6cqw 24cqw 7cqw;gap:1.6cqw;align-items:center;font-size:1.25cqw}
+.g-l .med{font-size:2.2cqw;font-weight:800;text-align:right;letter-spacing:-.1cqw;color:var(--verde-claro)}
+.dist{display:flex;height:1.6cqw;border-radius:50px;overflow:hidden;background:rgba(255,255,255,.06)}
+.dist i{display:block;height:100%;transition:flex-grow .8s cubic-bezier(.32,.72,0,1)}
+.g-l .ns{font-size:.95cqw;color:rgba(255,255,255,.45);text-align:right}
+.g-leg{display:flex;gap:1.5cqw;font-size:.95cqw;color:rgba(255,255,255,.55);margin-top:1.6cqw;align-items:center}
+.g-leg span{display:inline-flex;align-items:center;gap:.5cqw}
+.g-leg i{width:1cqw;height:1cqw;border-radius:50%;display:inline-block}
+.grade.densa .g-l{font-size:1.05cqw}.grade.densa{gap:.55cqw}.grade.densa .g-l .med{font-size:1.7cqw}
+
+.nuvem{display:flex;flex-wrap:wrap;gap:1cqw 2.2cqw;align-items:center;justify-content:center;align-content:center;height:34cqw}
+.nuvem span{font-weight:800;letter-spacing:-.08cqw;line-height:1;transition:font-size .6s cubic-bezier(.32,.72,0,1)}
+.nuvem span.novo,.card-ab.novo{animation:entra .7s cubic-bezier(.32,.72,0,1)}
+@keyframes entra{from{opacity:0;transform:translateY(1.5cqw) scale(.92)}to{opacity:1;transform:none}}
+
+.abertas-ocultas{display:flex;flex-direction:column;justify-content:center;height:30cqw}
+.abertas-ocultas .n{font-size:12cqw;font-weight:800;letter-spacing:-.5cqw;line-height:1}
+.abertas-ocultas p{font-size:1.5cqw;color:rgba(255,255,255,.6);margin:1cqw 0 0}
+.cards-ab{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2cqw;max-height:31cqw;overflow-y:auto;align-content:start;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent;padding-right:.6cqw}
+.dica-scroll{font-size:.95cqw;color:rgba(255,255,255,.4);margin-top:1cqw}
+.card-ab{background:rgba(255,255,255,.06);border-radius:1.2cqw;padding:1.4cqw 1.6cqw;font-size:1.25cqw;line-height:1.4;color:rgba(255,255,255,.9)}
+
+.t-cont-slide h1{font-size:4.2cqw;font-weight:800;letter-spacing:-.2cqw;line-height:1.05;margin:0 0 2cqw;max-width:70cqw}
+.t-cont-slide p{font-size:1.7cqw;line-height:1.55;color:rgba(255,255,255,.75);max-width:62cqw;margin:0 0 1.5cqw}
+.t-cont-slide .rod{font-size:1.1cqw;color:rgba(255,255,255,.45)}
+.t-tab{display:grid;grid-template-columns:11cqw repeat(4,1fr);font-size:.95cqw;line-height:1.35;border-top:1px solid rgba(255,255,255,.12)}
+.t-tab div{padding:.55cqw 1cqw;border-bottom:1px solid rgba(255,255,255,.08)}
+.t-tab .h{font-weight:800;color:var(--branco);font-size:1.15cqw}
+.t-tab .h.op{color:var(--verde-claro)}
+.t-tab .r{font-weight:700;color:rgba(255,255,255,.5);font-size:.8cqw;letter-spacing:.2cqw;text-transform:uppercase}
+.t-tab .c{color:rgba(255,255,255,.82)}
+
+.teclas{position:absolute;right:4cqw;bottom:5cqw;background:rgba(26,26,26,.96);border:1px solid rgba(255,255,255,.12);border-radius:1.2cqw;padding:1.6cqw 2cqw;font-size:1.05cqw;line-height:1.9;z-index:5;display:none}
+.teclas.show{display:block}
+.teclas kbd{font-family:inherit;font-weight:800;color:var(--verde-claro);display:inline-block;min-width:5cqw}
+.aviso{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(26,26,26,.97);border:1px solid var(--verde-claro);border-radius:1.4cqw;padding:2cqw 3cqw;font-size:1.6cqw;font-weight:700;z-index:6;text-align:center;display:none}
+.aviso.show{display:block}
+.aviso small{display:block;font-size:1.05cqw;font-weight:500;color:rgba(255,255,255,.6);margin-top:.6cqw}
+
+.controles{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.controles .btn-out{padding:10px 18px}
+.dica{font-size:.8rem;color:var(--cinza-texto);margin:12px 4px 0;line-height:1.5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dica,:root:not([data-theme="light"]) .rotulo-area{color:#9a9a9a}:root:not([data-theme="light"]) .controles .btn-out{color:#eee;border-color:#666}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="barra">
+  <div class="marca">Pesquisa com a Liderança<small>protótipo, dados só neste navegador</small></div>
+  <div class="seg" role="group" aria-label="Fase">
+    <button data-fase="fase1" class="on">Fase 1</button>
+    <button data-fase="fase2">Fase 2</button>
+  </div>
+  <button class="btn btn-verde" id="sim">Simular 15 pessoas</button>
+  <button class="btn btn-ghost" id="reset">Zerar tudo</button>
+</div>
+
+<div class="palco">
+  <div>
+    <p class="rotulo-area">Celular · link do QR</p>
+    <div class="celular"><div class="tela-cel" id="cel"></div></div>
+  </div>
+  <div class="lado-telao">
+    <p class="rotulo-area">Telão · clique nele e use as setas</p>
+    <div class="telao" id="telao" tabindex="0"></div>
+    <div class="controles">
+      <button class="btn btn-out" data-k="ArrowLeft">Anterior</button>
+      <button class="btn btn-out" data-k="ArrowRight">Próxima</button>
+      <button class="btn btn-out" data-k="q">QR</button>
+      <button class="btn btn-out" data-k="ArrowUp">Rolar ↑</button>
+      <button class="btn btn-out" data-k="ArrowDown">Rolar ↓</button>
+      <button class="btn btn-out" data-k="f">Encerrar / abrir</button>
+      <button class="btn btn-out" id="fs">Tela cheia</button>
+    </div>
+    <p class="dica">No app real, celular e telão são links separados, e cada fase tem o seu QR. Aqui ficam lado a lado para você testar: responda no celular e veja chegar no telão. Teclas no telão: ← → navegam, ↑ ↓ rolam as respostas abertas, Q volta ao QR, H esconde as abertas numa emergência, F encerra (confirma com F de novo), A abre, ? mostra a legenda.</p>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// PESQUISA COM A LIDERANÇA — 1B
+// Fonte única das perguntas. Editar aqui, nada de texto no código.
+//
+// Tipos:
+//   conteudo      → slide informativo (sem resposta)
+//   unica         → uma opção
+//   multipla      → várias opções (max = limite; exclusivas = desmarcam as outras)
+//   escala_grade  → vários itens avaliados de min a max (+ opção "não sei")
+//   aberta        → texto livre (longa: true = textarea)
+//   nuvem         → N palavras curtas (vira nuvem no telão)
+//
+// mostrarSe: { pergunta: "id", opcoes: [...] } → só aparece se a pessoa
+//            marcou uma dessas opções na pergunta indicada.
+// obrigatoria: fechadas = true por padrão; abertas = false por padrão.
+// ============================================================
+
+const FREQUENCIA = [
+  "Culto de Sábado – 19h",
+  "Domingo – Culto das 10h",
+  "Domingo – Culto das 17h",
+  "Domingo – Culto das 19h",
+  "Manhã de Oração – Seg a Sex, às 07h",
+  "Viva Vida – Quinta-feira, às 14h",
+  "Cesta de Bênçãos – Sexta-feira, às 15h",
+];
+
+const IDENTIFICACAO = (fase, comOutro) => [
+  {
+    id: `${fase}_01`, numero: 1, secao: "Identificação", tipo: "unica",
+    pergunta: "Tempo como membro da igreja",
+    opcoes: ["Até 5 anos", "6 a 15 anos", "16 a 30 anos", "Mais de 30 anos"],
+  },
+  {
+    id: `${fase}_02`, numero: 2, secao: "Identificação", tipo: "unica",
+    pergunta: "Faixa etária",
+    opcoes: ["Até 29 anos", "30 a 44 anos", "45 a 59 anos", "60 anos ou mais"],
+  },
+  {
+    id: `${fase}_03`, numero: 3, secao: "Identificação", tipo: "unica",
+    pergunta: "Envolvimento nas Redes de Cuidado",
+    opcoes: [
+      "Não participo de PGM",
+      "Membro de PGM",
+      "Líder ou Auxiliar de PGM",
+      "Supervisor, Coordenador ou Pastor de PGMs",
+    ],
+  },
+  {
+    id: `${fase}_04`, numero: 4, secao: "Identificação", tipo: "multipla",
+    pergunta: "Frequência",
+    instrucao: "Assinale mais de um se for o caso.",
+    opcoes: comOutro ? [...FREQUENCIA, "Outro"] : [...FREQUENCIA],
+  },
+];
+
+const ESCALA_CONCORDANCIA = {
+  1: "Discordo totalmente",
+  2: "Discordo",
+  3: "Nem concordo nem discordo",
+  4: "Concordo",
+  5: "Concordo totalmente",
+};
+
+const ESCALA_SATISFACAO = {
+  1: "Muito insatisfeito",
+  2: "Insatisfeito",
+  3: "Nem satisfeito nem insatisfeito",
+  4: "Satisfeito",
+  5: "Muito satisfeito",
+};
+
+const PESQUISAS = {
+  // ==========================================================
+  fase1: {
+    id: "fase1",
+    rotulo: "Fase 1",
+    titulo: "O Futuro da Primeira Batista",
+    lema: "Uma igreja apaixonada por Deus e por pessoas",
+    encerramento: "Obrigado por contribuir com discernimento e sinceridade.",
+    perguntas: [
+      {
+        id: "fase1_intro", tipo: "conteudo",
+        titulo: "Pesquisa com a Liderança",
+        texto: "Querido líder, queremos ouvir o seu coração sobre o futuro da nossa igreja. Não há respostas certas ou erradas. Responda com sinceridade e em espírito de oração.",
+        rodape: "Tempo estimado: 10 minutos.",
+      },
+
+      ...IDENTIFICACAO("fase1", true),
+      {
+        id: "fase1_04b", tipo: "aberta", secao: "Identificação",
+        pergunta: "Se marcou Outro, qual?",
+        mostrarSe: { pergunta: "fase1_04", opcoes: ["Outro"] },
+      },
+
+      // ---------- Visão de futuro ----------
+      {
+        id: "fase1_05", numero: 5, secao: "Visão de futuro", tipo: "aberta", longa: true,
+        pergunta: "Quando você pensa na Primeira Batista daqui a 10 anos, o que você vê?",
+      },
+      {
+        id: "fase1_06", numero: 6, secao: "Visão de futuro", tipo: "nuvem", qtd: 3,
+        pergunta: "Três palavras que deveriam definir nossa Igreja no futuro:",
+      },
+      {
+        // DECISÃO PENDENTE: o docx diz "três maiores prioridades" no título
+        // e "Escolha até dois" na instrução. Padrão adotado: até dois.
+        id: "fase1_07", numero: 7, secao: "Visão de futuro", tipo: "multipla", max: 2,
+        pergunta: "Em termos de investimento em estrutura, quais devem ser as maiores prioridades da igreja nos próximos 10 a 15 anos?",
+        instrucao: "Escolha até dois.",
+        opcoes: [
+          "Reformar a Sede",
+          "Adquirir propriedades próximas à Sede",
+          "Adquirir propriedade que possibilite o crescimento e expansão da Igreja",
+          "Estar presente em novas regiões da cidade",
+          "Construir um centro de retiros, encontros e formação",
+          "Fortalecer a sustentabilidade financeira",
+          "Outra",
+        ],
+      },
+      {
+        id: "fase1_07b", tipo: "aberta", secao: "Visão de futuro",
+        pergunta: "Se marcou Outra, qual?",
+        mostrarSe: { pergunta: "fase1_07", opcoes: ["Outra"] },
+      },
+      {
+        id: "fase1_08", numero: 8, secao: "Visão de futuro", tipo: "aberta", longa: true,
+        pergunta: "Qual é o maior desafio da igreja para as próximas décadas?",
+      },
+      {
+        id: "fase1_09", numero: 9, secao: "Visão de futuro", tipo: "unica",
+        pergunta: "Daqui a 10 anos, a igreja terá:",
+        opcoes: [
+          "Menos membros que hoje",
+          "Número semelhante",
+          "Até 50% a mais de membros",
+          "Mais de 50% a mais de membros",
+        ],
+      },
+      {
+        id: "fase1_10", numero: 10, secao: "Visão de futuro", tipo: "unica",
+        pergunta: "Qual modelo de igreja você considera mais adequado ao futuro?",
+        opcoes: [
+          "Uma sede central forte, que concentre a igreja",
+          "Uma sede central com campus em várias regiões da cidade",
+          "Uma rede de igrejas locais, com a sede como apoio",
+          "Sem opinião formada",
+        ],
+      },
+      {
+        id: "fase1_11", numero: 11, secao: "Visão de futuro", tipo: "escala_grade",
+        pergunta: "Avalie as afirmações abaixo",
+        min: 1, max: 5, rotulos: ESCALA_CONCORDANCIA, naoSei: "Não sei avaliar",
+        itens: [
+          "A localização atual da sede favorece nossa missão.",
+          "Uma presença em outra região da cidade pode ampliar nosso alcance.",
+          "Devemos priorizar o crescimento, mesmo com maior esforço financeiro.",
+          "Devemos priorizar decisões financeiramente conservadoras.",
+          "Retiros e encontros devem ocupar lugar mais importante em nossa estratégia.",
+          "A igreja está preparada para um grande projeto estrutural.",
+        ],
+      },
+      {
+        id: "fase1_12", numero: 12, secao: "Visão de futuro", tipo: "aberta", longa: true,
+        pergunta: "Se a igreja pudesse fazer um investimento estrutural relevante, onde você aplicaria primeiro? Por quê?",
+      },
+
+      // ---------- Estrutura do seu ministério ----------
+      {
+        id: "fase1_13", numero: 13, secao: "Estrutura do seu ministério", tipo: "unica",
+        pergunta: "Quantos retiros, acampamentos ou encontros fora da sede o seu ministério realiza por ano?",
+        opcoes: ["Nenhum", "1", "2", "3 ou mais"],
+      },
+      {
+        id: "fase1_14", numero: 14, secao: "Estrutura do seu ministério", tipo: "aberta", longa: true,
+        pergunta: "Onde eles acontecem, o espaço é alugado e qual a maior dificuldade para realizá-los?",
+      },
+      {
+        id: "fase1_15", numero: 15, secao: "Estrutura do seu ministério", tipo: "aberta", longa: true,
+        pergunta: "Para um funcionamento adequado do ministério que você está envolvido, qual estrutura física necessária?",
+      },
+
+      // ---------- Nossas instalações atuais ----------
+      {
+        id: "fase1_16", numero: 16, secao: "Nossas instalações atuais", tipo: "escala_grade",
+        pergunta: "Como você avalia a sede em cada aspecto?",
+        min: 1, max: 5, rotulos: ESCALA_SATISFACAO, naoSei: "Não sei avaliar",
+        itens: [
+          "Capacidade e conforto do templo",
+          "Estacionamento e facilidade de acesso",
+          "Acessibilidade",
+          "Espaço para crianças",
+          "Espaço com estrutura adicional para adolescentes e jovens",
+          "Salas de ensino e reuniões",
+          "Acolhimento de visitantes",
+          "Segurança e circulação de pessoas",
+          "Condições para expansão das atividades",
+          "Espaço para Voluntários",
+        ],
+      },
+      {
+        id: "fase1_17", numero: 17, secao: "Nossas instalações atuais", tipo: "unica",
+        pergunta: "A estrutura atual atenderá adequadamente a igreja pelos próximos 10 anos?",
+        opcoes: [
+          "Sim",
+          "Sim, desde que sejam feitas melhorias",
+          "Provavelmente não",
+          "Não",
+          "Não sei avaliar",
+        ],
+      },
+      {
+        id: "fase1_18", numero: 18, secao: "Nossas instalações atuais", tipo: "aberta", longa: true,
+        pergunta: "Quais são as três limitações físicas que mais prejudicam o trabalho da igreja hoje?",
+      },
+      {
+        id: "fase1_19", numero: 19, secao: "Nossas instalações atuais", tipo: "aberta", longa: true,
+        pergunta: "Que melhorias na sede atual deveriam ser prioritárias?",
+      },
+      {
+        id: "fase1_20", numero: 20, secao: "Nossas instalações atuais", tipo: "aberta", longa: true,
+        pergunta: "Sobre a questão de estrutura e funcionamento da Igreja, há algum tópico que você deseja incluir?",
+      },
+    ],
+  },
+
+  // ==========================================================
+  fase2: {
+    id: "fase2",
+    rotulo: "Fase 2",
+    titulo: "Decisão Patrimonial",
+    lema: "",
+    encerramento: "“Se o Senhor não edificar a casa, em vão trabalham os que a edificam.” (Salmos 127.1)",
+    perguntas: [
+      {
+        id: "fase2_intro", tipo: "conteudo",
+        titulo: "Pesquisa com a Liderança",
+        texto: "Querido líder, obrigado por participar da primeira fase. Agora apresentamos uma decisão concreta que a igreja está avaliando. Ainda não há decisão tomada. Esta pesquisa não é voto em assembleia nem compromisso de contribuição financeira; a decisão final cabe à Assembleia.",
+        destaque: "Ainda não há decisão tomada.",
+        rodape: "Tempo estimado: 15 minutos.",
+      },
+
+      ...IDENTIFICACAO("fase2", false),
+
+      // ---------- O cenário ----------
+      {
+        id: "fase2_cenario", tipo: "conteudo", secao: "O cenário",
+        titulo: "O cenário",
+        texto: "A igreja possui uma área de aproximadamente 100 hectares, avaliada em cerca de R$ 5 milhões. A proposta em estudo é vendê-la e reinvestir em um novo local. Há três opções.",
+        tabela: {
+          colunas: ["", "Área atual", "Opção A — Retiros", "Opção B — Nova Sede", "Opção C — Nova Sede / Piraputanga"],
+          linhas: [
+            ["Tamanho", "100 ha", "≈ 10 ha", "≈ 12.000 m² (1,2 ha)", "Tudo da Opção B + 11 ha do ACAMBAPI"],
+            ["Localização", "—", "Próxima à área urbana; baixa previsão de crescimento", "Região de maior expansão da cidade", "Tudo da Opção B + ACAMBAPI: 114 km da 1B"],
+            ["Vocação", "—", "Retiros, acampamentos e encontros", "Futura sede ou campus da igreja", "Tudo da Opção B + retiros, acampamentos e encontros"],
+            ["Valor estimado", "≈ R$ 5 mi (venda)", "≈ R$ 6 mi (avaliação) · a proprietária pede R$ 8 mi", "≈ R$ 12 mi (avaliação) · o proprietário pede R$ 15 mi", "Tudo da Opção B + aluguel de R$ 5.000,00 mensais"],
+            ["Recurso a captar", "—", "≈ R$ 1 a 3 mi só para o terreno", "≈ R$ 7 mi só para o terreno", "Tudo da Opção B + ≈ R$ 1 mi para melhorias na estrutura"],
+            ["Custos futuros", "—", "Estrutura e manutenção dos retiros", "Construção da nova sede", "Construção da nova sede + estrutura e manutenção dos retiros"],
+          ],
+        },
+        rodape: "Valores e características dependem de verificações técnicas e jurídicas.",
+      },
+      {
+        id: "fase2_05", numero: 5, secao: "O cenário", tipo: "unica",
+        pergunta: "Você conhece a área de 100 ha?",
+        opcoes: ["Já visitei", "Sei que existe, mas não conheço", "Não sabia que a igreja a possuía"],
+      },
+      {
+        id: "fase2_06", numero: 6, secao: "O cenário", tipo: "unica",
+        pergunta: "Sobre vender a área de 100 ha:",
+        opcoes: ["Concordo", "Concordo com ressalvas", "Discordo", "Não sei"],
+      },
+      {
+        id: "fase2_06b", tipo: "aberta", secao: "O cenário", longa: true,
+        pergunta: "Quais ressalvas? / Por quê?",
+        mostrarSe: { pergunta: "fase2_06", opcoes: ["Concordo com ressalvas", "Não sei"] },
+      },
+      {
+        id: "fase2_07", numero: 7, secao: "O cenário", tipo: "unica",
+        pergunta: "Qual opção está mais alinhada ao futuro da igreja?",
+        opcoes: [
+          "Certamente Opção A (Área de Retiros)",
+          "Tendendo para Opção A (Área de Retiros)",
+          "Certamente Opção B (Nova Sede)",
+          "Tendendo para Opção B (Nova Sede)",
+          "Certamente Opção C (Nova Sede / Assumir Piraputanga)",
+          "Tendendo para Opção C (Nova Sede / Assumir Piraputanga)",
+          "Indeciso",
+          "Nenhuma das três",
+        ],
+      },
+      {
+        id: "fase2_08", numero: 8, secao: "O cenário", tipo: "unica",
+        pergunta: "Qual fator mais pesou na sua escolha?",
+        opcoes: [
+          "Viabilidade financeira",
+          "Potencial de crescimento",
+          "Missão e visão",
+          "Necessidade das instalações atuais",
+          "Risco envolvido",
+          "Outro",
+        ],
+      },
+      {
+        id: "fase2_08b", tipo: "aberta", secao: "O cenário",
+        pergunta: "Se marcou Outro, qual?",
+        mostrarSe: { pergunta: "fase2_08", opcoes: ["Outro"] },
+      },
+      {
+        id: "fase2_09", numero: 9, secao: "O cenário", tipo: "unica",
+        pergunta: "Qual deve ser a prioridade estratégica da igreja neste momento?",
+        opcoes: [
+          "Adquirir uma área para retiros e encontros",
+          "Preparar a mudança da sede em região de expansão",
+          "Melhorar primeiro as instalações atuais",
+          "Preservar recursos e aguardar",
+          "Sem opinião formada",
+        ],
+      },
+      {
+        id: "fase2_10", numero: 10, secao: "O cenário", tipo: "unica",
+        pergunta: "Se houvesse recursos para apenas um grande projeto nos próximos 5 anos, qual deveria ser?",
+        opcoes: [
+          "Nova sede",
+          "Área de retiros",
+          "Reforma e ampliação da sede atual",
+          "Novos campus e congregações",
+          "Outro",
+        ],
+      },
+      {
+        id: "fase2_10b", tipo: "aberta", secao: "O cenário",
+        pergunta: "Se marcou Outro, qual?",
+        mostrarSe: { pergunta: "fase2_10", opcoes: ["Outro"] },
+      },
+      {
+        id: "fase2_11", numero: 11, secao: "O cenário", tipo: "aberta", longa: true,
+        pergunta: "Existe outro caminho, risco ou oportunidade que deveria ser considerado? (ex.: manter a área, vender parte, outra região)",
+      },
+
+      // ---------- Opção A ----------
+      {
+        id: "fase2_12", numero: 12, secao: "Sobre a Opção A — Retiros", tipo: "multipla", max: 2,
+        pergunta: "Quais benefícios você considera mais relevantes?",
+        instrucao: "Escolha até dois.",
+        opcoes: [
+          "Retiros e encontros da igreja",
+          "Formação de líderes",
+          "Programação de crianças, adolescentes e jovens",
+          "Convívio entre famílias e ministérios",
+          "Desenvolvimento do projeto por etapas",
+          "Não vejo benefício suficiente",
+        ],
+        exclusivas: ["Não vejo benefício suficiente"],
+      },
+      {
+        id: "fase2_13", numero: 13, secao: "Sobre a Opção A — Retiros", tipo: "unica",
+        pergunta: "Com que frequência o seu ministério usaria a área?",
+        opcoes: ["Não usaria", "1 a 2 vezes ao ano", "3 a 5 vezes ao ano", "Mais de 5 vezes ao ano"],
+      },
+      {
+        id: "fase2_14", numero: 14, secao: "Sobre a Opção A — Retiros", tipo: "unica",
+        pergunta: "Uma área de retiros deveria ser:",
+        opcoes: [
+          "Mantida pelo orçamento da igreja",
+          "Autossustentável, com locação a outras igrejas e eventos",
+          "Uma combinação das duas coisas",
+          "Não sei",
+        ],
+      },
+
+      // ---------- Opção B ----------
+      {
+        id: "fase2_15", numero: 15, secao: "Sobre a Opção B — Nova Sede", tipo: "multipla", max: 2,
+        pergunta: "Quais benefícios você considera mais relevantes?",
+        instrucao: "Escolha até dois.",
+        opcoes: [
+          "Localização para o crescimento futuro",
+          "Possibilidade de uma sede planejada (área de cultos, salas anexas, auditórios auxiliares, estacionamento, etc.)",
+          "Alcance de novas regiões e famílias",
+          "Ampliação dos espaços de culto e ministérios",
+          "Visibilidade e presença na cidade",
+          "Não vejo benefício suficiente",
+        ],
+        exclusivas: ["Não vejo benefício suficiente"],
+      },
+      {
+        id: "fase2_16", numero: 16, secao: "Sobre a Opção B — Nova Sede", tipo: "unica",
+        pergunta: "Se a igreja ocupasse a área da Opção B, o que fazer com o prédio atual?",
+        opcoes: [
+          "Vender para financiar a nova sede",
+          "Manter como campus central da igreja",
+          "Destinar a outro uso (ação social, escola, formação)",
+          "Não concordo com a mudança",
+        ],
+      },
+      {
+        id: "fase2_17", numero: 17, secao: "Sobre a Opção B — Nova Sede", tipo: "unica",
+        pergunta: "Se a sede fosse para uma região de expansão, você e sua família continuariam frequentando com a mesma regularidade?",
+        opcoes: ["Sim", "Provavelmente sim", "Provavelmente não", "Não"],
+      },
+      {
+        id: "fase2_18", numero: 18, secao: "Sobre a Opção C — Nova Sede / Piraputanga", tipo: "aberta", longa: true,
+        pergunta: "Em relação ao COMBO apresentado na OPÇÃO C (NOVA SEDE E PIRAPUTANGA), qual sua opinião?",
+      },
+
+      // ---------- Viabilidade ----------
+      {
+        id: "fase2_19", numero: 19, secao: "Viabilidade e condições", tipo: "multipla", max: 3,
+        pergunta: "Quais preocupações merecem mais atenção antes de qualquer decisão?",
+        instrucao: "Escolha até três.",
+        opcoes: [
+          "Valor da compra",
+          "Custo de construção e manutenção",
+          "Empréstimo ou endividamento",
+          "Impacto sobre missões, ministérios e cuidado pastoral",
+          "Tamanho e possibilidade de expansão da área",
+          "Segurança, acesso, trânsito e estacionamento",
+          "Adequação legal e técnica do terreno",
+          "Prazo para gerar benefícios",
+          "Uso da sede atual durante a transição",
+          "Possível perda de membros",
+          "Cenário político-econômico do país",
+        ],
+      },
+      {
+        id: "fase2_20", numero: 20, secao: "Viabilidade e condições", tipo: "unica",
+        pergunta: "Sobre financiamento para viabilizar o projeto:",
+        opcoes: [
+          "Somente com recursos próprios e campanhas destinadas",
+          "Financiamento de até 5 anos",
+          "Financiamento de até 10 anos",
+          "Financiamento acima de 10 anos",
+        ],
+      },
+      {
+        id: "fase2_21", numero: 21, secao: "Viabilidade e condições", tipo: "multipla", max: 3,
+        pergunta: "Quais condições são essenciais antes da igreja assumir o projeto?",
+        instrucao: "Escolha até três.",
+        opcoes: [
+          "Alinhamento à missão e à visão",
+          "Estudos técnicos sobre terreno, acesso e construção",
+          "Orçamento completo e transparente",
+          "Execução por etapas",
+          "Limite claro de endividamento",
+          "Preservação dos investimentos em ministérios e missões",
+          "Ampla participação da igreja na decisão",
+        ],
+      },
+      {
+        id: "fase2_22", numero: 22, secao: "Viabilidade e condições", tipo: "unica",
+        pergunta: "Você se sente suficientemente informado para opinar?",
+        opcoes: ["Sim", "Parcialmente", "Não"],
+      },
+      {
+        id: "fase2_22b", tipo: "aberta", secao: "Viabilidade e condições", longa: true,
+        pergunta: "Que informações faltam?",
+        mostrarSe: { pergunta: "fase2_22", opcoes: ["Parcialmente", "Não"] },
+      },
+
+      // ---------- Participação pessoal ----------
+      {
+        id: "fase2_23", numero: 23, secao: "Participação pessoal", tipo: "multipla",
+        pergunta: "Se o projeto for aprovado, de que forma você participaria?",
+        instrucao: "Marque quantas quiser.",
+        opcoes: [
+          "Oração e mobilização",
+          "Reuniões de planejamento",
+          "Conhecimento profissional",
+          "Engajamento no projeto",
+          "Campanhas de arrecadação",
+          "Contribuição financeira, conforme minhas possibilidades",
+          "Ainda não sei",
+          "Sem disponibilidade neste momento",
+        ],
+        exclusivas: ["Ainda não sei", "Sem disponibilidade neste momento"],
+      },
+      {
+        id: "fase2_23b", tipo: "aberta", secao: "Participação pessoal",
+        pergunta: "Qual a sua área de conhecimento profissional?",
+        mostrarSe: { pergunta: "fase2_23", opcoes: ["Conhecimento profissional"] },
+      },
+      {
+        id: "fase2_24", numero: 24, secao: "Participação pessoal", tipo: "unica",
+        pergunta: "Sobre contribuir financeiramente para o Projeto (além de Dízimos e OMF), você irá contribuir:",
+        opcoes: [
+          "Sim, regularmente, conforme minhas possibilidades",
+          "Sim, com uma contribuição pontual",
+          "Talvez, após conhecer o projeto e o orçamento",
+          "Não tenho condições neste momento",
+          "Prefiro não responder",
+        ],
+      },
+      {
+        id: "fase2_25", numero: 25, secao: "Participação pessoal", tipo: "unica",
+        pergunta: "As pessoas que você lidera se engajariam no projeto?",
+        opcoes: ["Muito", "Moderadamente", "Pouco", "Não sei"],
+      },
+
+      // ---------- Palavra final ----------
+      {
+        // No docx aparece como 27 (não existe 26). Renumerado para 26.
+        id: "fase2_26", numero: 26, secao: "Palavra final", tipo: "aberta", longa: true,
+        pergunta: "Há algo que o Colégio Pastoral precisa considerar antes desta decisão?",
+      },
+    ],
+  },
+};
+
+
+
+
+
+const BASE="https://filipebiten.github.io/pesquisa-lideranca/";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const novoEstado=()=>({
+  fase:"fase1",
+  resp:{fase1:{},fase2:{}}, part:{fase1:{},fase2:{}},
+  status:{fase1:"aberta",fase2:"aberta"},
+  tIdx:{fase1:0,fase2:0}, abertas:true,
+  eu:{fase1:{idx:0,sub:0,ans:{},fim:false},fase2:{idx:0,sub:0,ans:{},fim:false}}
+});
+let S=novoEstado();
+let rascunho=null, confirmaF=false, simCount=0;
+
+/* ---------- helpers de dados ---------- */
+const P=()=>PESQUISAS[S.fase];
+function visiveis(fase,ans){
+  return PESQUISAS[fase].perguntas.filter(q=>{
+    if(!q.mostrarSe)return true;
+    const v=ans[q.mostrarSe.pergunta]; if(v==null)return false;
+    const arr=Array.isArray(v)?v:[v];
+    return q.mostrarSe.opcoes.some(o=>arr.includes(o));
+  });
+}
+function gravar(fase,uid,q,val){
+  S.resp[fase][q.id]=S.resp[fase][q.id]||{};
+  S.resp[fase][q.id][uid]={v:val,t:Date.now()};
+  onDados(fase,q.id);
+}
+function apagar(fase,uid,qid){ if(S.resp[fase][qid]&&S.resp[fase][qid][uid]){delete S.resp[fase][qid][uid];onDados(fase,qid);} }
+function entrou(fase,uid){ if(!S.part[fase][uid]){S.part[fase][uid]={fim:false};onDados(fase,null);} }
+
+/* ================= CELULAR ================= */
+function renderCel(){
+  const fase=S.fase, pq=PESQUISAS[fase], eu=S.eu[fase], el=$("#cel");
+  const cab=`<div class="cab-cel"><div class="logo-txt"><span class="selo1b">1B</span>Primeira Batista</div><div class="fase">${pq.rotulo}</div></div>`;
+  if(S.status[fase]!=="aberta" && !eu.fim){
+    el.innerHTML=cab+`<div class="fim-cel"><span class="tag-line">${pq.rotulo}</span><h2>Pesquisa encerrada</h2><p>Obrigado pela participação. Se ainda não respondeu, aguarde a abertura.</p></div>`;return;
+  }
+  if(eu.fim){
+    el.innerHTML=cab+`<div class="fim-cel"><div class="circ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg></div><h2>Respostas enviadas</h2><p>${esc(pq.encerramento)}</p><button class="btn btn-out" id="refazer" style="margin-top:18px">Revisar respostas</button></div>`;
+    $("#refazer").onclick=()=>{eu.fim=false;eu.idx=0;eu.sub=0;renderCel();};return;
+  }
+  const lista=visiveis(fase,eu.ans); if(eu.idx>=lista.length)eu.idx=lista.length-1;
+  const q=lista[eu.idx];
+  const numeradas=lista.filter(x=>x.numero).length;
+  const feitas=lista.slice(0,eu.idx+1).filter(x=>x.numero).length;
+  const pct=Math.round(feitas/numeradas*100);
+  let corpo="", podeAvancar=true, textoProx="Próxima";
+  const atual=eu.ans[q.id];
+  rascunho = atual!=null ? JSON.parse(JSON.stringify(atual)) : null;
+
+  if(q.tipo==="conteudo"){
+    textoProx="Continuar";
+    let tab="";
+    if(q.tabela){
+      const cols=q.tabela.colunas;
+      for(let c=1;c<cols.length;c++){
+        tab+=`<div class="card-op"><h3>${esc(cols[c])}</h3><dl>`+q.tabela.linhas.map(l=>`<dt>${esc(l[0])}</dt><dd>${esc(l[c])}</dd>`).join("")+`</dl></div>`;
+      }
+    }
+    let txt=esc(q.texto); if(q.destaque)txt=txt.replace(esc(q.destaque),`<b>${esc(q.destaque)}</b>`);
+    corpo=`<div class="conteudo-cel">${q.secao?`<span class="tag-line">${esc(q.secao)}</span>`:`<span class="tag-line">${esc(pq.rotulo)} · ${esc(pq.titulo)}</span>`}<h2>${esc(q.titulo)}</h2><p>${txt}</p>${tab}${q.rodape?`<p class="rod">${esc(q.rodape)}</p>`:""}</div>`;
+  } else {
+    const cont=q.numero?`<div class="contagem">Pergunta ${feitas} de ${numeradas}</div>`:`<div class="contagem">Complemento</div>`;
+    let inner="";
+    if(q.tipo==="unica"){
+      inner=`<div class="opcs ${q.opcoes.length>6?"compacta":""}">`+q.opcoes.map(o=>`<button class="opc ${atual===o?"on":""}" data-o="${esc(o)}">${esc(o)}</button>`).join("")+`</div>`;
+      podeAvancar=atual!=null;
+    } else if(q.tipo==="multipla"){
+      const sel=rascunho||[];
+      const cheio=q.max&&sel.length>=q.max;
+      inner=`<div class="opcs ${q.opcoes.length>6?"compacta":""}">`+q.opcoes.map(o=>`<button class="opc ${sel.includes(o)?"on":(cheio?"off":"")}" data-o="${esc(o)}">${esc(o)}</button>`).join("")+`</div>`;
+      podeAvancar=sel.length>0;
+    } else if(q.tipo==="escala_grade"){
+      const arr=rascunho||Array(q.itens.length).fill(null);
+      const v=arr[eu.sub];
+      inner=`<div class="contagem" style="margin-top:4px">Item ${eu.sub+1} de ${q.itens.length}</div><div class="item-escala">${esc(q.itens[eu.sub])}</div>
+        <div class="escala">`+[1,2,3,4,5].map(n=>`<button class="opc ${v===n?"on":""}" data-n="${n}">${n}</button>`).join("")+`</div>
+        <div class="rot-escala">${v&&v!=="ns"?esc(q.rotulos[v]):"&nbsp;"}</div>
+        <button class="opc ${v==="ns"?"on":""}" data-n="ns" style="text-align:center">${esc(q.naoSei)}</button>`;
+      podeAvancar=v!=null;
+    } else if(q.tipo==="aberta"){
+      inner=q.longa?`<textarea id="txt" maxlength="1000" placeholder="Escreva aqui">${esc(atual||"")}</textarea>`:`<input class="txt" id="txt" maxlength="200" placeholder="Escreva aqui" value="${esc(atual||"")}">`;
+      textoProx=(atual&&atual.trim())?"Próxima":"Pular";
+    } else if(q.tipo==="nuvem"){
+      const arr=rascunho||Array(q.qtd).fill("");
+      inner=`<div class="nuvem-in">`+arr.map((w,i)=>`<input class="txt" data-i="${i}" maxlength="25" placeholder="Palavra ${i+1}" value="${esc(w)}">`).join("")+`</div>`;
+      textoProx=arr.some(w=>w.trim())?"Próxima":"Pular";
+    }
+    corpo=`${q.secao?`<span class="tag-line">${esc(q.secao)}</span>`:""}${cont}<h2 class="perg">${esc(q.pergunta)}</h2>${q.instrucao?`<p class="instr">${esc(q.instrucao)}</p>`:(q.tipo==="escala_grade"?`<p class="instr">1 = ${esc(q.rotulos[1])} · 5 = ${esc(q.rotulos[5])}</p>`:"")}${inner}`;
+  }
+  const ultimo=eu.idx===lista.length-1 && (q.tipo!=="escala_grade"||eu.sub===q.itens.length-1);
+  if(ultimo&&q.tipo!=="conteudo")textoProx="Enviar";
+  el.innerHTML=cab+`<div class="prog"><i style="width:${pct}%"></i></div><span class="salvo" id="salvo">salvo ✓</span>
+    <div class="corpo-cel">${corpo}</div>
+    <div class="rodape-cel">${eu.idx>0||eu.sub>0?`<button class="btn btn-out" id="volta">Voltar</button>`:""}<button class="btn btn-verde" id="prox" ${podeAvancar?"":"disabled"}>${textoProx}</button></div>`;
+
+  // eventos
+  el.querySelectorAll(".opc[data-o]").forEach(b=>b.onclick=()=>{
+    const o=b.dataset.o;
+    if(q.tipo==="unica"){eu.ans[q.id]=o;commit(q,o,true);renderCel();}
+    else{
+      let sel=(eu.ans[q.id]||[]).slice();
+      if(sel.includes(o))sel=sel.filter(x=>x!==o);
+      else{
+        const ex=q.exclusivas||[];
+        if(ex.includes(o))sel=[o];else{sel=sel.filter(x=>!ex.includes(x)); if(q.max&&sel.length>=q.max)return; sel.push(o);}
+      }
+      eu.ans[q.id]=sel; if(!sel.length)delete eu.ans[q.id]; renderCel();
+    }
+  });
+  el.querySelectorAll(".opc[data-n]").forEach(b=>b.onclick=()=>{
+    const arr=(eu.ans[q.id]||Array(q.itens.length).fill(null)).slice();
+    arr[eu.sub]=b.dataset.n==="ns"?"ns":+b.dataset.n; eu.ans[q.id]=arr; renderCel();
+  });
+  const t=$("#txt"); if(t){t.oninput=()=>{eu.ans[q.id]=t.value;$("#prox").textContent=t.value.trim()?(ultimo?"Enviar":"Próxima"):"Pular";};}
+  el.querySelectorAll(".nuvem-in input").forEach(inp=>inp.oninput=()=>{
+    const arr=(eu.ans[q.id]||Array(q.qtd).fill("")).slice(); arr[+inp.dataset.i]=inp.value; eu.ans[q.id]=arr;
+    $("#prox").textContent=arr.some(w=>w.trim())?(ultimo?"Enviar":"Próxima"):"Pular";
+  });
+  const v=$("#volta"); if(v)v.onclick=()=>{
+    if(q.tipo==="escala_grade"&&eu.sub>0){eu.sub--;}
+    else{eu.idx--;const pq2=visiveis(fase,eu.ans)[eu.idx]; eu.sub=pq2&&pq2.tipo==="escala_grade"?pq2.itens.length-1:0;}
+    renderCel();
+  };
+  $("#prox").onclick=()=>{
+    if(q.tipo==="escala_grade"&&eu.sub<q.itens.length-1){eu.sub++;renderCel();return;}
+    if(q.tipo!=="conteudo")commit(q,eu.ans[q.id]);
+    // limpa condicionais que deixaram de valer
+    PESQUISAS[fase].perguntas.filter(x=>x.mostrarSe).forEach(x=>{
+      if(!visiveis(fase,eu.ans).includes(x)&&eu.ans[x.id]!=null){delete eu.ans[x.id];apagar(fase,"voce",x.id);}
+    });
+    const nova=visiveis(fase,eu.ans);
+    if(eu.idx>=nova.length-1){eu.fim=true;S.part[fase].voce&&(S.part[fase].voce.fim=true);onDados(fase,null);}
+    else{eu.idx++;eu.sub=0;}
+    renderCel();
+  };
+}
+function commit(q,val,silencio){
+  const fase=S.fase; entrou(fase,"voce");
+  let v=val;
+  if(q.tipo==="aberta"){v=(val||"").trim(); if(!v){apagar(fase,"voce",q.id);return;}}
+  if(q.tipo==="nuvem"){v=(val||[]).map(w=>w.trim()).filter(Boolean); if(!v.length){apagar(fase,"voce",q.id);return;}}
+  if(v==null)return;
+  gravar(fase,"voce",q,v);
+  const s=$("#salvo"); if(s){s.classList.add("show");setTimeout(()=>s&&s.classList.remove("show"),900);}
+}
+
+/* ================= TELÃO ================= */
+const slides=fase=>["qr",...PESQUISAS[fase].perguntas,"fim"];
+let vistos=new Set(), slideAtual=null;
+function nResp(fase,qid){return Object.keys(S.resp[fase][qid]||{}).length;}
+function nPart(fase){return Object.keys(S.part[fase]).length;}
+
+function renderTelao(){
+  const fase=S.fase, pq=PESQUISAS[fase], sl=slides(fase), i=S.tIdx[fase], s=sl[i];
+  slideAtual=s; vistos=new Set();
+  const status=S.status[fase];
+  const cab=`<div class="t-cab"><div class="logo-txt"><span class="selo1b">1B</span>Primeira Batista</div>
+    <div class="t-status"><span class="pill ${status==="aberta"?"aberta":""}">${status==="aberta"?"Aberta":"Encerrada"}</span><span class="pill">Sheets ✓</span></div></div>`;
+  let corpo="", rod="";
+  if(s==="qr"){
+    corpo=`<div class="qr-wrap"><div class="qr-box" id="qr"></div><div class="qr-txt">
+      <span class="tag-line tag-white t-tag">${esc(pq.rotulo)}</span>
+      <h1>${esc(pq.titulo)}</h1>
+      <p>Aponte a câmera do celular para o código e responda.<br>Leva cerca de ${fase==="fase1"?"10":"15"} minutos.</p>
+      <div class="qr-num"><b id="cntPart">${nPart(fase)}</b><small>pessoas já entraram</small></div>
+      <p class="link" style="margin-top:2.4cqw">${esc(BASE.replace("https://",""))}?fase=${fase}</p></div></div>`;
+  } else if(s==="fim"){
+    corpo=`<div class="t-cont-slide" style="display:flex;flex-direction:column;justify-content:center;height:100%"><span class="tag-line tag-white t-tag">${esc(pq.rotulo)} encerrada</span><h1>Obrigado pela participação</h1><p>${esc(pq.encerramento)}</p><div class="qr-num" style="margin-top:2cqw">${nPart(fase)}<small>participantes</small></div></div>`;
+  } else if(s.tipo==="conteudo"){
+    let tab="";
+    if(s.tabela){
+      const c=s.tabela.colunas;
+      tab=`<div class="t-tab">`+c.map((h,k)=>`<div class="h ${k>1?"op":""}">${esc(h)}</div>`).join("")+
+        s.tabela.linhas.map(l=>l.map((x,k)=>`<div class="${k===0?"r":"c"}">${esc(x)}</div>`).join("")).join("")+`</div>`;
+    }
+    corpo=`<div class="t-cont-slide">${`<span class="tag-line tag-white t-tag">${esc(s.secao||pq.rotulo+" · "+pq.titulo)}</span>`}<h1 style="${s.tabela?"font-size:2.6cqw;margin-bottom:.6cqw":""}">${esc(s.titulo)}</h1><p style="${s.tabela?"font-size:1.15cqw;max-width:85cqw;margin-bottom:1cqw":""}">${esc(s.texto)}</p>${tab}${s.rodape?`<p class="rod" style="margin-top:1cqw">${esc(s.rodape)}</p>`:""}</div>`;
+  } else {
+    const titulo=`<span class="tag-line tag-white t-tag">${esc(s.secao||"")}${s.numero?` · Pergunta ${s.numero}`:" · Complemento"}</span>
+      <h2 class="t-perg">${esc(s.pergunta)}${s.instrucao?`<small>${esc(s.instrucao)}</small>`:""}</h2>`;
+    corpo=titulo+`<div id="viz">${vizHTML(s)}</div>`;
+    rod=`<span class="t-cont"><b id="cntResp">${nResp(fase,s.id)}</b> responderam esta pergunta</span>`;
+  }
+  $("#telao").innerHTML=cab+`<div class="t-corpo">${corpo}</div>
+    <div class="t-rod">${rod||`<span></span>`}<span>${i} / ${sl.length-1}</span></div>
+    <div class="teclas" id="teclas"><kbd>← →</kbd>navegar<br><kbd>Q</kbd>voltar ao QR<br><kbd>↑ ↓</kbd>rolar respostas abertas<br><kbd>H</kbd>esconder/mostrar abertas<br><kbd>A</kbd>abrir pesquisa<br><kbd>F F</kbd>encerrar pesquisa<br><kbd>S</kbd>ressincronizar Sheets</div>
+    <div class="aviso" id="aviso"></div>`;
+  if(s==="qr"&&window.QRCode){
+    new QRCode($("#qr"),{text:BASE+"?view=responder&fase="+fase,width:600,height:600,colorDark:"#232323",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M});
+  }
+  if(s!=="qr"&&s!=="fim"&&s.tipo!=="conteudo")requestAnimationFrame(()=>atualizaViz(s,true));
+}
+function vizHTML(q){
+  const fase=S.fase;
+  if(q.tipo==="unica"||q.tipo==="multipla"){
+    const densa=q.opcoes.length>6;
+    return `<div class="barras ${densa?"densa":""}">`+q.opcoes.map((o,k)=>`<div class="barra-l" data-k="${k}"><div class="nome">${esc(o)}</div><div class="trilho"><i></i></div><div class="val">0%<small>0</small></div></div>`).join("")+`</div>`+
+      (q.tipo==="multipla"?`<div class="legenda">Cada pessoa pode marcar mais de uma opção: a soma passa de 100%.</div>`:"");
+  }
+  if(q.tipo==="escala_grade"){
+    const cores=["#8a4b4b","#a07a6a","#6f6f6f","#6fa58d","#5E9C82"];
+    return `<div class="grade ${q.itens.length>7?"densa":""}">`+q.itens.map((it,k)=>`<div class="g-l" data-k="${k}"><div>${esc(it)}</div><div class="med">–</div><div class="dist">${cores.map(c=>`<i style="background:${c};flex-grow:0"></i>`).join("")}</div><div class="ns">0 não sei</div></div>`).join("")+`</div>
+      <div class="g-leg">${cores.map((c,k)=>`<span><i style="background:${c}"></i>${k+1} ${esc(q.rotulos[k+1])}</span>`).join("")}</div>`;
+  }
+  if(q.tipo==="nuvem")return `<div class="nuvem" id="nuv"></div>`;
+  if(q.tipo==="aberta")return `<div id="ab"></div>`;
+  return "";
+}
+function atualizaViz(q,inicial){
+  const fase=S.fase, dados=S.resp[fase][q.id]||{}, uids=Object.keys(dados), n=uids.length;
+  if(q.tipo==="unica"||q.tipo==="multipla"){
+    const cont=q.opcoes.map(()=>0);
+    uids.forEach(u=>{const v=dados[u].v;(Array.isArray(v)?v:[v]).forEach(x=>{const k=q.opcoes.indexOf(x);if(k>=0)cont[k]++;});});
+    const max=Math.max(...cont);
+    document.querySelectorAll(".barra-l").forEach(row=>{
+      const k=+row.dataset.k,c=cont[k],p=n?Math.round(c/n*100):0;
+      row.querySelector(".trilho i").style.width=p+"%";
+      row.querySelector(".val").innerHTML=`${p}%<small>${c}</small>`;
+      row.classList.toggle("lider",max>0&&c===max);
+    });
+  } else if(q.tipo==="escala_grade"){
+    document.querySelectorAll(".g-l").forEach(row=>{
+      const k=+row.dataset.k, dist=[0,0,0,0,0]; let ns=0,sum=0,cnt=0;
+      uids.forEach(u=>{const v=dados[u].v[k]; if(v==="ns")ns++; else if(v){dist[v-1]++;sum+=v;cnt++;}});
+      row.querySelector(".med").textContent=cnt?(sum/cnt).toFixed(1).replace(".",","):"–";
+      row.querySelectorAll(".dist i").forEach((el,j)=>el.style.flexGrow=dist[j]);
+      row.querySelector(".ns").textContent=ns+" não sei";
+    });
+  } else if(q.tipo==="nuvem"){
+    const f={};
+    uids.forEach(u=>dados[u].v.forEach(w=>{const k=w.toLowerCase().trim().replace(/\s+/g," ");if(k)f[k]=(f[k]||0)+1;}));
+    const ent=Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,40), mx=ent.length?ent[0][1]:1;
+    const nuv=$("#nuv"); if(!nuv)return;
+    if(!ent.length){nuv.innerHTML=`<span style="font-size:1.6cqw;font-weight:500;color:rgba(255,255,255,.4)">As palavras vão aparecer aqui</span>`;return;}
+    // embaralha de forma estável pra nuvem não parecer lista
+    const ord=ent.map((e,i)=>[e,(i*7919)%ent.length]).sort((a,b)=>a[1]-b[1]).map(x=>x[0]);
+    nuv.innerHTML=ord.map(([w,c])=>{const sz=1.6+(c/mx)*5.4, novo=!inicial&&!vistos.has(w);return `<span class="${novo?"novo":""}" style="font-size:${sz}cqw;color:${c===mx?"var(--verde-claro)":`rgba(255,255,255,${.55+.45*c/mx})`}">${esc(w)}</span>`;}).join("");
+    ord.forEach(([w])=>vistos.add(w));
+  } else if(q.tipo==="aberta"){
+    const ab=$("#ab"); if(!ab)return;
+    if(!S.abertas){
+      ab.innerHTML=`<div class="abertas-ocultas"><div class="n">${n}</div><p>${n===1?"resposta recebida":"respostas recebidas"} · escondidas no telão · aperte H para mostrar</p></div>`;
+    } else {
+      const lista=uids.map(u=>({u,...dados[u]})).sort((a,b)=>b.t-a.t);
+      const velho=ab.querySelector(".cards-ab"), pos=velho?velho.scrollTop:0;
+      ab.innerHTML=lista.length?`<div class="cards-ab" id="cardsAb">`+lista.map(r=>`<div class="card-ab ${!inicial&&!vistos.has(r.u)?"novo":""}">${esc(r.v)}</div>`).join("")+`</div>`+(lista.length>9?`<div class="dica-scroll">${lista.length} respostas · role com ↑ ↓ ou com o mouse para ver todas</div>`:""):`<p style="font-size:1.6cqw;color:rgba(255,255,255,.4)">As respostas vão aparecer aqui assim que chegarem.</p>`;
+      const novo=ab.querySelector(".cards-ab"); if(novo&&pos>40)novo.scrollTop=pos;
+      lista.forEach(r=>vistos.add(r.u));
+    }
+  }
+  const c=$("#cntResp"); if(c&&c.textContent!=String(n)){c.textContent=n;c.classList.remove("pulse");void c.offsetWidth;c.classList.add("pulse");}
+}
+function onDados(fase,qid){
+  if(fase!==S.fase)return;
+  const s=slideAtual;
+  if(s==="qr"){const c=$("#cntPart"); if(c){c.textContent=nPart(fase);c.classList.remove("pulse");void c.offsetWidth;c.classList.add("pulse");}}
+  else if(s&&s.id&&(qid===null||qid===s.id)&&s.tipo!=="conteudo")atualizaViz(s,false);
+}
+function aviso(msg,sub){const a=$("#aviso");if(!a)return;a.innerHTML=msg+(sub?`<small>${sub}</small>`:"");a.classList.add("show");clearTimeout(aviso.t);aviso.t=setTimeout(()=>a.classList.remove("show"),2200);}
+
+function tecla(k){
+  const fase=S.fase, total=slides(fase).length;
+  if(k!=="f")confirmaF=false;
+  if(k==="ArrowRight"||k==="PageDown"||k===" "){S.tIdx[fase]=Math.min(total-1,S.tIdx[fase]+1);renderTelao();}
+  else if(k==="ArrowLeft"||k==="PageUp"){S.tIdx[fase]=Math.max(0,S.tIdx[fase]-1);renderTelao();}
+  else if(k==="q"){S.tIdx[fase]=0;renderTelao();}
+  else if(k==="ArrowDown"||k==="ArrowUp"){const c=$("#cardsAb");if(c)c.scrollBy({top:(k==="ArrowDown"?1:-1)*c.clientHeight*.6});}
+  else if(k==="h"){S.abertas=!S.abertas;const s=slideAtual;if(s&&s.tipo==="aberta"){vistos=new Set();atualizaViz(s,true);}aviso(S.abertas?"Respostas abertas visíveis":"Respostas abertas escondidas (H mostra de novo)");}
+  else if(k==="a"){S.status[fase]="aberta";renderTelao();renderCel();aviso("Pesquisa aberta",PESQUISAS[fase].rotulo);}
+  else if(k==="f"){
+    if(S.status[fase]!=="aberta"){S.status[fase]="aberta";renderTelao();renderCel();aviso("Pesquisa aberta de novo");return;}
+    if(!confirmaF){confirmaF=true;aviso("Encerrar a pesquisa?","Aperte F de novo para confirmar");return;}
+    confirmaF=false;S.status[fase]="encerrada";renderTelao();renderCel();aviso("Pesquisa encerrada","Quem estava respondendo vê a tela de encerrado");
+  }
+  else if(k==="s")aviso("Planilha ressincronizada","No protótipo isso é só ilustrativo");
+  else if(k==="?"){$("#teclas").classList.toggle("show");}
+}
+document.addEventListener("keydown",e=>{
+  const tag=(document.activeElement||{}).tagName;
+  if(tag==="INPUT"||tag==="TEXTAREA")return;
+  const k=e.key.length===1?e.key.toLowerCase():e.key;
+  if(["ArrowDown","ArrowUp","ArrowRight","ArrowLeft","PageDown","PageUp"," ","q","h","a","f","s","?"].includes(k)){e.preventDefault();tecla(k);}
+});
+document.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>tecla(b.dataset.k));
+$("#fs").onclick=()=>{const t=$("#telao");(t.requestFullscreen||t.webkitRequestFullscreen||(()=>{})).call(t);t.focus();};
+
+/* ---------- simulação ---------- */
+const POOL_ABERTA=["Uma igreja presente em várias regiões da cidade.","Mais espaço para crianças e adolescentes.","O estacionamento hoje limita muito.","Estrutura própria para retiros.","Cuidar bem de quem já está antes de crescer.","Formar mais líderes para os PGMs.","Planejamento financeiro responsável, por etapas.","Salas de ensino adequadas para a Escola do Discípulo.","Acolhimento melhor para visitantes.","Ouvir mais a igreja antes de decidir."];
+const POOL_NUVEM=["acolhedora","missionária","família","relevante","generosa","unida","bíblica","presente","viva","comunidade","serviço","oração","acolhedora","família","missionária"];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function simular(n){
+  const fase=S.fase;
+  if(S.status[fase]!=="aberta"){aviso("Pesquisa encerrada","Aperte A para abrir antes de simular");return;}
+  for(let p=0;p<n;p++){
+    const uid="sim"+(++simCount);
+    setTimeout(()=>{
+      entrou(fase,uid); const ans={};
+      PESQUISAS[fase].perguntas.forEach((q,qi)=>{
+        if(q.tipo==="conteudo")return;
+        if(q.mostrarSe){const v=ans[q.mostrarSe.pergunta];const arr=Array.isArray(v)?v:[v];if(!q.mostrarSe.opcoes.some(o=>arr.includes(o)))return;}
+        let v=null;
+        if(q.tipo==="unica"){const w=q.opcoes.map((_,k)=>1+((k*3+simCount)%4));let r=Math.random()*w.reduce((a,b)=>a+b);v=q.opcoes.find((_,k)=>(r-=w[k])<0)||q.opcoes[0];}
+        else if(q.tipo==="multipla"){const lim=q.max||3;const c=q.opcoes.filter(o=>!(q.exclusivas||[]).includes(o));v=[...new Set(Array.from({length:1+Math.floor(Math.random()*lim)},()=>pick(c.slice(0,Math.max(3,c.length-1)))))].slice(0,lim);}
+        else if(q.tipo==="escala_grade")v=q.itens.map((_,k)=>Math.random()<.08?"ns":Math.max(1,Math.min(5,Math.round(2.4+((k*1.7)%2.2)+(Math.random()*2-1)))));
+        else if(q.tipo==="nuvem")v=[pick(POOL_NUVEM),pick(POOL_NUVEM),pick(POOL_NUVEM)];
+        else if(q.tipo==="aberta"){if(Math.random()<.7)v=pick(POOL_ABERTA);}
+        if(v!=null){ans[q.id]=v;setTimeout(()=>gravar(fase,uid,q,v),qi*60+Math.random()*400);}
+      });
+    },p*260);
+  }
+}
+$("#sim").onclick=()=>simular(15);
+$("#reset").onclick=()=>{S=novoEstado();simCount=0;document.querySelectorAll(".seg button").forEach(b=>b.classList.toggle("on",b.dataset.fase==="fase1"));renderCel();renderTelao();};
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{
+  S.fase=b.dataset.fase; document.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===b)); renderCel();renderTelao();
+});
+
+renderCel();renderTelao();
+</script>
+</body>
+</html>
