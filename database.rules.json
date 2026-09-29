@@ -6,38 +6,29 @@
     "fases": {
       "$fase": {
         "$sessao": {
-          ".write": "root.child('operadores').child(auth.uid).val() === true",
-
           "status": {
             ".read": true,
+            ".write": true,
             ".validate": "newData.isString() && (newData.val() === 'aberta' || newData.val() === 'encerrada')"
           },
 
           "participantes": {
-            ".read": "root.child('operadores').child(auth.uid).val() === true",
+            ".read": true,
             "$uid": {
-              ".read": "auth.uid === $uid || root.child('operadores').child(auth.uid).val() === true",
               ".write": "auth.uid === $uid && root.child('fases').child($fase).child($sessao).child('status').val() === 'aberta'"
             }
           },
 
           "respostas": {
-            ".read": "root.child('operadores').child(auth.uid).val() === true",
+            ".read": true,
             "$pergunta": {
               "$uid": {
-                ".read": "auth.uid === $uid || root.child('operadores').child(auth.uid).val() === true",
                 ".write": "auth.uid === $uid && root.child('fases').child($fase).child($sessao).child('status').val() === 'aberta'",
                 ".validate": "newData.hasChildren(['valor', 'em']) && (newData.child('valor').isString() === false || newData.child('valor').val().length <= 1000)"
               }
             }
           }
         }
-      }
-    },
-
-    "operadores": {
-      "$uid": {
-        ".read": "auth.uid === $uid || root.child('operadores').child(auth.uid).val() === true"
       }
     }
   }

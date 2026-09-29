@@ -4,25 +4,8 @@ import * as sheets from "./sheets.js";
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 export async function init(ctx) {
-  const { db, ref, get, set, onValue, off, caminho, uid, fase, sessao, el, view } = ctx;
+  const { db, ref, set, onValue, off, caminho, fase, sessao, el } = ctx;
   const pq = PESQUISAS[fase];
-
-  // ---- portão do operador: sem senha, só o uid deste navegador aprovado no console ----
-  let autorizado = false;
-  try {
-    await get(ref(db, caminho("participantes")));
-    autorizado = true;
-  } catch (_) {
-    autorizado = false;
-  }
-  if (!autorizado) {
-    el.innerHTML = `<div class="setup-op"><h1>Autorizar este telão</h1>
-      <p>Este navegador ainda não é operador. Copie o ID abaixo, abra o Firebase Console → Realtime Database, e crie:<br><b>/operadores/&lt;ID&gt; = true</b> (booleano)</p>
-      <code>${esc(uid)}</code>
-      <button class="btn btn-verde" id="retry">Já autorizei, tentar de novo</button></div>`;
-    document.getElementById("retry").onclick = () => init(ctx);
-    return;
-  }
 
   const slides = ["qr", ...pq.perguntas, "fim"];
   let idx = 0;
