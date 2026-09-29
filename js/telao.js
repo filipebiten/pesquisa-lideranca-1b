@@ -24,9 +24,9 @@ export async function init(ctx) {
     sheets.onParticipantes(ctx, snap.val() || {});
   });
 
-  let status = "encerrada";
+  let status = "aberta";
   onValue(ref(db, caminho("status")), (snap) => {
-    status = snap.val() || "encerrada";
+    status = snap.val() || "aberta";
     render();
   });
 

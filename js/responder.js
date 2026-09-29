@@ -24,7 +24,7 @@ export async function init(ctx) {
     get(ref(db, caminho("participantes", uid))),
     get(ref(db, caminho("respostas"))),
   ]);
-  st.status = statusSnap.val() || "encerrada";
+  st.status = statusSnap.val() || "aberta";
   const part = participanteSnap.val();
   if (part) {
     st.entrouRegistrado = true;
@@ -42,7 +42,7 @@ export async function init(ctx) {
   }
 
   onValue(ref(db, caminho("status")), (snap) => {
-    st.status = snap.val() || "encerrada";
+    st.status = snap.val() || "aberta";
     render();
   });
   onValue(ref(db, ".info/connected"), (snap) => {
@@ -70,7 +70,7 @@ export async function init(ctx) {
     } catch (err) {
       // provavelmente a fase fechou no meio da resposta — recarrega status
       const snap = await get(ref(db, caminho("status")));
-      st.status = snap.val() || "encerrada";
+      st.status = snap.val() || "aberta";
       render();
     }
   }

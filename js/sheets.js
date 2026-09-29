@@ -23,8 +23,11 @@ export function statusPill() {
   return { texto: "Sheets ✓", alerta: false };
 }
 
+function secretSalvo() {
+  return localStorage.getItem("pesquisa1b_sheets_secret") || "";
+}
 function pedirSecret() {
-  const salvo = localStorage.getItem("pesquisa1b_sheets_secret");
+  const salvo = secretSalvo();
   if (salvo) return salvo;
   const digitado = prompt("Segredo do Sheets (colado uma única vez, fica só neste navegador):");
   if (digitado) localStorage.setItem("pesquisa1b_sheets_secret", digitado);
@@ -75,7 +78,9 @@ async function linhaParticipante(ctx, uid, todasRespostas, todosParticipantes) {
 
 async function enviar(ctx, participantes, motivo) {
   if (!ligado(ctx)) return;
-  if (!secret) secret = pedirSecret();
+  // sincronização automática (motivo "auto") nunca interrompe com prompt — só usa
+  // segredo já salvo. O prompt (uma vez, por navegador) só aparece com a tecla S.
+  if (!secret) secret = motivo === "auto" ? secretSalvo() : pedirSecret();
   if (!secret) return;
   const body = { secret, fase: ctx.fase, colunas: colunasDaFase(ctx.fase), participantes, motivo };
   try {
