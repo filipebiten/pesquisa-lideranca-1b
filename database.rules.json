@@ -15,7 +15,7 @@
           "participantes": {
             ".read": true,
             "$uid": {
-              ".write": "auth.uid === $uid && root.child('fases').child($fase).child($sessao).child('status').val() === 'aberta'"
+              ".write": "auth.uid === $uid && root.child('fases').child($fase).child($sessao).child('status').val() !== 'encerrada'"
             }
           },
 
@@ -23,7 +23,7 @@
             ".read": true,
             "$pergunta": {
               "$uid": {
-                ".write": "auth.uid === $uid && root.child('fases').child($fase).child($sessao).child('status').val() === 'aberta'",
+                ".write": "auth.uid === $uid && root.child('fases').child($fase).child($sessao).child('status').val() !== 'encerrada'",
                 ".validate": "newData.hasChildren(['valor', 'em']) && (newData.child('valor').isString() === false || newData.child('valor').val().length <= 1000)"
               }
             }
