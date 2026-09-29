@@ -9,7 +9,6 @@ const FIREBASE_CONFIG = {
   appId: "1:1064376099745:web:914d7bb59f5c65d77de1e0",
 };
 
-// Preencher depois de publicar o Apps Script como Web App (Etapa 3 do README).
-const SHEETS_WEBAPP_URL = "";
+const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz7O7Oot2ENiNIkHpQtZ_cGkgyj5n5ATV_dlXC34MxB8hakEW3BtVb_in1Flad7hngUUQ/exec";
 
 const BASE_URL = "https://filipebiten.github.io/pesquisa-lideranca-1b/";

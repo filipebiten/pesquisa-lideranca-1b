@@ -71,13 +71,11 @@ export async function init(ctx) {
 
     let corpo = "", rod = "";
     if (s === "qr") {
-      const link = `${BASE_URL}?view=responder&fase=${fase}`;
       corpo = `<div class="qr-wrap"><div class="qr-box" id="qr"></div><div class="qr-txt">
         <span class="tag-line tag-white t-tag">${esc(pq.rotulo)}</span>
         <h1>${esc(pq.titulo)}</h1>
         <p>Aponte a câmera do celular para o código e responda.<br>Leva cerca de ${fase === "fase1" ? "10" : "15"} minutos.</p>
-        <div class="qr-num"><b id="cntPart">${nPart}</b><small>pessoas já entraram</small></div>
-        <p class="link">${esc(link.replace("https://", ""))}</p></div></div>`;
+        <div class="qr-num"><b id="cntPart">${nPart}</b><small>pessoas já entraram</small></div></div></div>`;
     } else if (s === "fim") {
       corpo = `<div class="t-cont-slide" style="display:flex;flex-direction:column;justify-content:center;height:100%"><span class="tag-line tag-white t-tag">${esc(pq.rotulo)} encerrada</span><h1>Obrigado pela participação</h1><p>${esc(pq.encerramento)}</p><div class="qr-num" style="margin-top:2cqw">${nPart}<small>participantes</small></div></div>`;
     } else if (s.tipo === "conteudo") {
